@@ -1,0 +1,46 @@
+Manual de instalação
+1 - Você vai entrar no painel de cadastro de empresa, vai logar com
+o usuário admin@gmail.com 
+e senha admin
+No campo empresa, vai colocar o nome da empresa, cadastrar um email 
+pra ela, pode ser (nome da empresa)@gmail.com
+e uma senha admin(nome da empresa)
+Exemplo:
+EMPRESA: Orbita
+USUARIO: orbita@gmail.com
+SENHA: adminOrbita
+após a criação
+
+2 - Você vai colocar a pasta API_R3 no computador do cliente
+
+3 - Dentro da pasta vai instalar um dos NODE.js
+Windows 7 - versão 12.22
+Windows 10 - versão 18
+
+4 - Após a instalação vai clicar no arquivo .env com o botão direito
+e ir em "abrir com" e vai abrir com o bloco de Notas, onde tem 
+"Dashboard R3" você vai substituir pelo nome da empresa
+OBS: o nome tem que estar do mesmo jeito que cadastrou no painel
+vai salvar e sair
+
+5 - Após isso vai clicar em starter.bat pra iniciar a sincronização
+dos dados no banco
+
+6 - Você vai apertar a tecla windows + R, digitar "taskschd.msc" pra inicializar o automatizador de tarefas do Windows
+
+7 - Lá você vai clicar em "Criar Tarefa"
+
+8 - Na aba você vai dar um nome da tarefa e clicar na caixinha "executar com privilegios mais altos"
+
+9 - Depois vai na aba ao lado em "Disparadores" clicar em "novo", depois clicar em "Diariamente"
+
+10 - Em configurações avançadas vai clicar em "repetir tarefa a cada:"
+
+11 - Depois vai na aba ao lado de Disparadores, a aba "ação" e clica em "novo"
+
+12 - Aonde tem "programa/script" vai em procurar e vai até a pasta da API e clicar em "starter.bat"
+
+13- Após isso só sair dando OK
+
+14 - Depois de concluida, só passar os dados pra cliente pra ela acessar através
+do link https://dashboardr3.onrender.com
