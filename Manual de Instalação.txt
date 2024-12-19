@@ -2,8 +2,8 @@ Manual de instalação
 1 - Você vai entrar no painel de cadastro de empresa, vai logar com
 o usuário admin 
 e senha admin
-No campo empresa, vai colocar o nome da empresa, cadastrar um USUARIO
-como CNPJ e a senha o que Thaiany orientar ou que você achar melhor(geralmente 1 a 6, ou então "admin")
+No campo empresa, vai colocar o nome da empresa, cadastrar um email 
+pra ela, pode ser (nome da empresa)@gmail.com
 e uma senha admin(nome da empresa)
 Exemplo:
 EMPRESA: Orbita
