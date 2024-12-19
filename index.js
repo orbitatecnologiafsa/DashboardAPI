@@ -1,28 +1,27 @@
-require('dotenv').config();
-const express = require('express');
-const pool = require('./pgConf.js');
-const db = require('./dbSQL.js'); 
+require("dotenv").config();
+const express = require("express");
+const pool = require("./pgConf.js");
+const db = require("./dbSQL.js");
 
-
-const cors = require('cors');
+const cors = require("cors");
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-
 const doccID = process.env.EMPRESA;
 console.log(doccID);
-app.get('/api/dashboard', async (req, res) => {  
+app.get("/api/dashboard", async (req, res) => {
   try {
     //As querys "response" são as querys que eu pego os dados do banco postgree que já tá instalado no cliente
 
     // Query dos produtos
     const response = await pool.query(`
-      SELECT SUM("PRECOCUSTO") AS total_preco_custo, SUM("PRECOVENDA") AS total_preco_venda 
+      SELECT "PRODUTO", "CODPRODUTO", "PRECOVENDA"
       FROM "C000025" 
       INNER JOIN "C000100" ON ("CODPRODUTO" = "CODIGO");
     `);
 
+    console.log(response);
     // Query do caixa
     const responseCaixa = await pool.query(`
 SELECT "CODIGO", "CODCAIXA", "CODOPERADOR", "DATA", "SAIDA", "ENTRADA", 
@@ -104,40 +103,48 @@ SELECT "C000061"."CODIGO", "C000061"."NUMERO", "CFOP", "DATA", "CODCLIENTE", "VA
     `);
 
     // Exclusão das tabelas para após isso recriá-las e atualizar os dados
-    db.query(`DROP TABLE IF EXISTS dashboardProdutos${doccID};`, (err, results) => {
-      if (err) throw err;
-      console.log('Tabela dashboardProdutos excluída com sucesso!');
-    });
-    db.query(`DROP TABLE IF EXISTS dashboardCaixa${doccID};`, (err, results) => {
-      if (err) throw err;
-      console.log('Tabela dashboardCaixa excluída com sucesso!');
-    });
-    db.query(`DROP TABLE IF EXISTS dashboardVendas${doccID};`, (err, results) => {
-      if (err) throw err;
-      console.log('Tabela dashboardVendas excluída com sucesso!');
-    })
-    db.query(`DROP TABLE IF EXISTS dashboardComissoes${doccID};`, (err, results) => {
-      if (err) throw err;
-      console.log('Tabela dashboardComissoes excluída com sucesso!');
-    })  
-
-
-    // Criação das tabelas
-    // db.query(`
-    //   CREATE TABLE IF NOT EXISTS dashboardProdutos${doccID} (
-    //   ID_PRECOS INT AUTO_INCREMENT PRIMARY KEY, 
-    //   PRECO_CUSTO FLOAT, 
-    //   PRECO_VENDA FLOAT,
-    //   UNIQUE KEY (ID_PRECOS) -- Adicione uma chave única
-    // );
-    // `, (err, results) => {
-    //   if (err) throw err;
-    //   console.log('Tabela dashboardProdutos criada com sucesso!');
-    // });
-
-     "VALOR", "CODNFSAIDA", "CODIGO_VENDA", "HORA" 
     
-    db.query(`
+    db.query(
+      `DROP TABLE IF EXISTS dashboardCaixa${doccID};`,
+      (err, results) => {
+        if (err) throw err;
+        console.log("Tabela dashboardCaixa excluída com sucesso!");
+      }
+    );
+    db.query(
+      `DROP TABLE IF EXISTS dashboardVendas${doccID};`,
+      (err, results) => {
+        if (err) throw err;
+        console.log("Tabela dashboardVendas excluída com sucesso!");
+      }
+    );
+    db.query(
+      `DROP TABLE IF EXISTS dashboardComissoes${doccID};`,
+      (err, results) => {
+        if (err) throw err;
+        console.log("Tabela dashboardComissoes excluída com sucesso!");
+      }
+    );
+
+    db.query(
+      `
+       CREATE TABLE IF NOT EXISTS dashboardProdutos${doccID} (
+       ID INT AUTO_INCREMENT PRIMARY KEY,
+       CODPRODUTO INT, 
+       PRODUTO VARCHAR(255), 
+      PRECOVENDA FLOAT
+     );
+     `,
+      (err, results) => {
+        if (err) throw err;
+        console.log("Tabela dashboardProdutos criada com sucesso!");
+      }
+    );
+
+    "VALOR", "CODNFSAIDA", "CODIGO_VENDA", "HORA";
+
+    db.query(
+      `
       CREATE TABLE IF NOT EXISTS dashboardCaixa${doccID} (
         ID_CAIXA INT AUTO_INCREMENT PRIMARY KEY,
         CODIGO VARCHAR(255),
@@ -155,29 +162,27 @@ SELECT "C000061"."CODIGO", "C000061"."NUMERO", "CFOP", "DATA", "CODCLIENTE", "VA
         HORA DATETIME,
         UNIQUE KEY (ID_CAIXA)
       );
-      `, (err, results) => {
-      if (err) throw err;
-      console.log('Tabela dashboardCaixa criada com sucesso!');
-    });
+      `,
+      (err, results) => {
+        if (err) throw err;
+        console.log("Tabela dashboardCaixa criada com sucesso!");
+      }
+    );
 
+    // "C000061"."CODIGO", "C000061"."NUMERO", "CFOP", "DATA", "CODCLIENTE", "VALOR_PRODUTOS",
+    //        "TOTAL_NOTA", "NOME",
+    //        "DESCONTO",
+    //        "MODELO_NF",
+    //        CASE
+    //            WHEN "NFE_SITUACAO" = 3 THEN 'ORÇAMENTO'
+    //            WHEN "NFE_SITUACAO" = 5 THEN 'CONTIGENCIA'
+    //            WHEN "NFE_SITUACAO" = 6 THEN 'EMITIDA'
+    //            WHEN "NFE_SITUACAO" = 8 THEN 'CANCELADA'
+    //            ELSE 'OUTRO'
+    //        END AS "DESCRICAO_SITUACAO"
 
-// "C000061"."CODIGO", "C000061"."NUMERO", "CFOP", "DATA", "CODCLIENTE", "VALOR_PRODUTOS", 
-//        "TOTAL_NOTA", "NOME",
-//        "DESCONTO", 
-//        "MODELO_NF", 
-//        CASE 
-//            WHEN "NFE_SITUACAO" = 3 THEN 'ORÇAMENTO'
-//            WHEN "NFE_SITUACAO" = 5 THEN 'CONTIGENCIA'
-//            WHEN "NFE_SITUACAO" = 6 THEN 'EMITIDA'
-//            WHEN "NFE_SITUACAO" = 8 THEN 'CANCELADA'
-//            ELSE 'OUTRO'
-//        END AS "DESCRICAO_SITUACAO"
-
-
-
-
-
-    db.query(`
+    db.query(
+      `
         CREATE TABLE IF NOT EXISTS dashboardVendas${doccID} (
         ID_VENDAS INT AUTO_INCREMENT PRIMARY KEY, 
         DATA DATETIME,
@@ -191,12 +196,15 @@ SELECT "C000061"."CODIGO", "C000061"."NUMERO", "CFOP", "DATA", "CODCLIENTE", "VA
         NUMERO VARCHAR(255),
         CFOP VARCHAR(255),
         UNIQUE KEY (ID_VENDAS) 
-    )`, (err, results) => {
-      if (err) throw err;
-      console.log('Tabela dashboardVendas criada com sucesso!');
-    });
+    )`,
+      (err, results) => {
+        if (err) throw err;
+        console.log("Tabela dashboardVendas criada com sucesso!");
+      }
+    );
 
-    db.query(`
+    db.query(
+      `
       CREATE TABLE IF NOT EXISTS dashboardComissoes${doccID} (
         ID_COMISSOES INT AUTO_INCREMENT PRIMARY KEY, 
         CODVENDEDOR INT,
@@ -204,31 +212,21 @@ SELECT "C000061"."CODIGO", "C000061"."NUMERO", "CFOP", "DATA", "CODCLIENTE", "VA
         NOME VARCHAR(255),
         UNIQUE KEY (ID_COMISSOES)
       );
-      `, (err, results) =>{
-      if (err) throw err;
-      console.log('Tabela dashboardComissoes criada com sucesso!');
-    })
+      `,
+      (err, results) => {
+        if (err) throw err;
+        console.log("Tabela dashboardComissoes criada com sucesso!");
+      }
+    );
 
-    // Inserir dados em dashboardProdutos
-    // response.rows.forEach(row => {
-    //   db.query(`
-    //     INSERT INTO dashboardProdutos${doccID} (PRECO_CUSTO, PRECO_VENDA) 
-    //     VALUES (?, ?) ON DUPLICATE KEY UPDATE 
-    //     PRECO_CUSTO = VALUES(PRECO_CUSTO), 
-    //     PRECO_VENDA = VALUES(PRECO_VENDA);`, [row.total_preco_custo, row.total_preco_venda], (err, results) => {
-    //     if (err) throw err;
-    //     console.log('Dados inseridos em dashboardProdutos:', results);
-    //   });
-    // });
 
     // Inserir dados em dashboardCaixa
 
-
-    
-    responseCaixa.rows.forEach(row => {
+    responseCaixa.rows.forEach((row) => {
       //Aqui é onde é feito os inserts no banco da Hostinger o mySql
       // Ele pega o que vem do banco postgree e insere no banco da Hostinger
-      db.query(`
+      db.query(
+        `
         INSERT INTO dashboardCaixa${doccID} (DATA, SAIDA, ENTRADA, VALOR, CODIGO, CODCAIXA, CODOPERADOR, CODCONTA, TIPO_MOVIMENTO, HISTORICO) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE
         SAIDA = VALUES(SAIDA), 
@@ -241,13 +239,27 @@ SELECT "C000061"."CODIGO", "C000061"."NUMERO", "CFOP", "DATA", "CODCLIENTE", "VA
         CODOPERADOR = VALUES(CODOPERADOR),
         CODCONTA = VALUES(CODCONTA),
         TIPO_MOVIMENTO = VALUES(TIPO_MOVIMENTO),
-        HISTORICO = VALUES(HISTORICO)`, [row.DATA, row.SAIDA, row.ENTRADA, row.VALOR, row.CODIGO, row.CODCAIXA, row.CODOPERADOR, row.CODCONTA, row.TIPO_MOVIMENTO, row.HISTORICO], (err, results) => {
-        if (err) throw err;
-        console.log('Dados inseridos em dashboardCaixa:', results);
-      });
+        HISTORICO = VALUES(HISTORICO)`,
+        [
+          row.DATA,
+          row.SAIDA,
+          row.ENTRADA,
+          row.VALOR,
+          row.CODIGO,
+          row.CODCAIXA,
+          row.CODOPERADOR,
+          row.CODCONTA,
+          row.TIPO_MOVIMENTO,
+          row.HISTORICO,
+        ],
+        (err, results) => {
+          if (err) throw err;
+          console.log("Dados inseridos em dashboardCaixa:", results);
+        }
+      );
     });
     // DATA DATETIME,
-    // VALOR_PRODUTOS FLOAT, 
+    // VALOR_PRODUTOS FLOAT,
     // TOTAL_NOTA FLOAT,
     // NOME VARCHAR(255),
     // DESCONTO FLOAT,
@@ -257,8 +269,9 @@ SELECT "C000061"."CODIGO", "C000061"."NUMERO", "CFOP", "DATA", "CODCLIENTE", "VA
     // NUMERO VARCHAR(255),
     // CFOP VARCHAR(255)
     // Inserir dados em dashboardVendas
-    responseVendas.rows.forEach(row => {
-      db.query(`
+    responseVendas.rows.forEach((row) => {
+      db.query(
+        `
         INSERT INTO dashboardVendas${doccID} (DATA ,VALOR_PRODUTOS, TOTAL_NOTA, NOME, DESCONTO, CODCLIENTE, MODELO_NF, DESCRICAO_SITUACAO, NUMERO, CFOP) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE
         VALOR_PRODUTOS = VALUES(VALOR_PRODUTOS),
@@ -270,36 +283,67 @@ SELECT "C000061"."CODIGO", "C000061"."NUMERO", "CFOP", "DATA", "CODCLIENTE", "VA
         MODELO_NF = VALUES(MODELO_NF),
         DESCRICAO_SITUACAO = VALUES(DESCRICAO_SITUACAO),
         NUMERO = VALUES(NUMERO),
-        CFOP = VALUES(CFOP)`, [row.DATA, row.VALOR_PRODUTOS, row.TOTAL_NOTA, row.NOME, row.DESCONTO, row.CODCLIENTE, row.MODELO_NF, row.DESCRICAO_SITUACAO, row.NUMERO, row.CFOP], (err, results) => {
-        if (err) throw err;
-        console.log('Dados inseridos em dashboardVendas:', results);
-      });
+        CFOP = VALUES(CFOP)`,
+        [
+          row.DATA,
+          row.VALOR_PRODUTOS,
+          row.TOTAL_NOTA,
+          row.NOME,
+          row.DESCONTO,
+          row.CODCLIENTE,
+          row.MODELO_NF,
+          row.DESCRICAO_SITUACAO,
+          row.NUMERO,
+          row.CFOP,
+        ],
+        (err, results) => {
+          if (err) throw err;
+          console.log("Dados inseridos em dashboardVendas:", results);
+        }
+      );
     });
+    response.rows.forEach((row) => {
+      db.query(
+        `
+        INSERT INTO dashboardProdutostestep (PRODUTO, PRECOVENDA, CODPRODUTO)
+        VALUES (?, ?, ?) 
+        ON DUPLICATE KEY UPDATE 
+          PRECOVENDA = VALUES(PRECOVENDA),
+          CODPRODUTO = VALUES(CODPRODUTO),
+          PRODUTO = VALUES(PRODUTO);`,
+        [row.PRODUTO, row.PRECOVENDA, row.CODPRODUTO], // Verifique se row.CODPRODUTO está presente
+        (err, results) => {
+          if (err) throw err;
+          console.log("Dados inseridos em dashboardProdutos:", results);
+        }
+      );
+    });
+    
 
-    responseComissoes.rows.forEach(row => {
-      db.query(`
+    responseComissoes.rows.forEach((row) => {
+      db.query(
+        `
         INSERT INTO dashboardComissoes${doccID} (CODVENDEDOR, VALOR_TOTAL, NOME) 
         VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE
         VALOR_TOTAL = VALUES(VALOR_TOTAL),
-        NOME = VALUES(NOME)`, [row.CODVENDEDOR, row.TOTAL_GERAL, row.NOME], (err, results) => {
-        if (err) throw err;
-        console.log('Dados inseridos em dashboardComissoes:', results);
-      });
+        NOME = VALUES(NOME)`,
+        [row.CODVENDEDOR, row.TOTAL_GERAL, row.NOME],
+        (err, results) => {
+          if (err) throw err;
+          console.log("Dados inseridos em dashboardComissoes:", results);
+        }
+      );
     });
     db.end();
-    res.send('Dados inseridos com sucesso!');
+    res.send("Dados inseridos com sucesso!");
   } catch (err) {
-    console.error('Erro:', err);
-    res.status(500).send('Ocorreu um erro.');
+    console.error("Erro:", err);
+    res.status(500).send("Ocorreu um erro.");
   }
 });
 
-
-
-
-
 app.listen(3000, () => {
-  console.log('Server listening on port 3000');
+  console.log("Server listening on port 3000");
 
-  require('./request.js');
-})
+  require("./request.js");
+});
