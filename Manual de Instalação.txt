@@ -1,14 +1,14 @@
 Manual de instalação
 1 - Você vai entrar no painel de cadastro de empresa, vai logar com
-o usuário admin@gmail.com 
+o usuário admin 
 e senha admin
-No campo empresa, vai colocar o nome da empresa, cadastrar um email 
-pra ela, pode ser (nome da empresa)@gmail.com
+No campo empresa, vai colocar o nome da empresa, cadastrar um USUARIO
+como CNPJ e a senha o que Thaiany orientar ou que você achar melhor(geralmente 1 a 6, ou então "admin")
 e uma senha admin(nome da empresa)
 Exemplo:
 EMPRESA: Orbita
-USUARIO: orbita@gmail.com
-SENHA: adminOrbita
+USUARIO: 00.000.000/0000-00
+SENHA: adminOrbita 
 após a criação
 
 2 - Você vai colocar a pasta API_R3 no computador do cliente
@@ -26,7 +26,7 @@ vai salvar e sair
 5 - Após isso vai clicar em starter.bat pra iniciar a sincronização
 dos dados no banco
 
-6 - Você vai apertar a tecla windows + R, digitar "taskschd.msc" pra inicializar o automatizador de tarefas do Windows
+6 - Você vai apertar a tecla windows + R, digitar "taskschd.msc" pra inicializar o automatizador de tarefas do Windows(Caso não abra o Window + R, só pesquisar "gerenciador de tarefas" que deve aparecer)
 
 7 - Lá você vai clicar em "Criar Tarefa"
 

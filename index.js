@@ -14,6 +14,8 @@ const doccID = process.env.EMPRESA;
 console.log(doccID);
 app.get('/api/dashboard', async (req, res) => {  
   try {
+    //As querys "response" são as querys que eu pego os dados do banco postgree que já tá instalado no cliente
+
     // Query dos produtos
     const response = await pool.query(`
       SELECT SUM("PRECOCUSTO") AS total_preco_custo, SUM("PRECOVENDA") AS total_preco_venda 
@@ -101,9 +103,7 @@ SELECT "C000061"."CODIGO", "C000061"."NUMERO", "CFOP", "DATA", "CODCLIENTE", "VA
       ORDER BY "TOTAL_GERAL" DESC;
     `);
 
-
-
-
+    // Exclusão das tabelas para após isso recriá-las e atualizar os dados
     db.query(`DROP TABLE IF EXISTS dashboardProdutos${doccID};`, (err, results) => {
       if (err) throw err;
       console.log('Tabela dashboardProdutos excluída com sucesso!');
@@ -222,7 +222,12 @@ SELECT "C000061"."CODIGO", "C000061"."NUMERO", "CFOP", "DATA", "CODCLIENTE", "VA
     // });
 
     // Inserir dados em dashboardCaixa
+
+
+    
     responseCaixa.rows.forEach(row => {
+      //Aqui é onde é feito os inserts no banco da Hostinger o mySql
+      // Ele pega o que vem do banco postgree e insere no banco da Hostinger
       db.query(`
         INSERT INTO dashboardCaixa${doccID} (DATA, SAIDA, ENTRADA, VALOR, CODIGO, CODCAIXA, CODOPERADOR, CODCONTA, TIPO_MOVIMENTO, HISTORICO) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE
