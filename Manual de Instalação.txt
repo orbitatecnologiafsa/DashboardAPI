@@ -2,6 +2,8 @@ Manual de instalação
 1 - Você vai entrar no painel de cadastro de empresa, vai logar com
 o usuário admin 
 e senha admin
+https://createusersdashboard.onrender.com
+
 No campo empresa, vai colocar o nome da empresa, cadastrar um email 
 pra ela, pode ser (nome da empresa)@gmail.com
 e uma senha admin(nome da empresa)
@@ -26,21 +28,5 @@ vai salvar e sair
 5 - Após isso vai clicar em starter.bat pra iniciar a sincronização
 dos dados no banco
 
-6 - Você vai apertar a tecla windows + R, digitar "taskschd.msc" pra inicializar o automatizador de tarefas do Windows(Caso não abra o Window + R, só pesquisar "gerenciador de tarefas" que deve aparecer)
-
-7 - Lá você vai clicar em "Criar Tarefa"
-
-8 - Na aba você vai dar um nome da tarefa e clicar na caixinha "executar com privilegios mais altos"
-
-9 - Depois vai na aba ao lado em "Disparadores" clicar em "novo", depois clicar em "Diariamente"
-
-10 - Em configurações avançadas vai clicar em "repetir tarefa a cada:"
-
-11 - Depois vai na aba ao lado de Disparadores, a aba "ação" e clica em "novo"
-
-12 - Aonde tem "programa/script" vai em procurar e vai até a pasta da API e clicar em "starter.bat"
-
-13- Após isso só sair dando OK
-
-14 - Depois de concluida, só passar os dados pra cliente pra ela acessar através
+6 - Depois de concluida, só passar os dados pra cliente pra ela acessar através
 do link https://dashboardr3.onrender.com
